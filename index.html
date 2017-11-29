@@ -1,1 +1,119 @@
-<h1>Hello World!</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
+    <title>EPFL Signature Generator</title>
+    <style>
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+        <section class="section">
+            <div class="container">
+                <div class="columns">
+                    <div class="column"></div>
+                    <div class="column is-two-thirds">
+                        <div class="box">
+                            <h3 class="title is-3 has-text-centered">EPFL Signature Generator</h3>
+                            <div v-if="displayForm">
+                                <div class="field">
+                                    <label class="label">First Name and Last Name</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="John Doe" v-model="name">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Title</label>
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Student" v-model="title">
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Email Address</label>
+                                    <div class="control">
+                                        <input class="input" type="email" placeholder="john.doe@epfl.ch" v-model="email">
+                                    </div>
+                                </div>
+                                <div class="has-text-centered">
+                                    <br>
+                                    <a class="button is-primary is-outlined " @click="generateSignature">Generate</a>
+                                    <br>
+                                </div> 
+                            </div>
+                            <div v-else>
+                                <br>
+                                <iframe v-bind:srcdoc="signatureHTML" height="250" width="100%"></iframe>
+                                <div class="has-text-centered">
+                                    <a class="button is-primary is-outlined " @click="copySignature" v-text="copyButtonInnerText" v-bind:disabled="copyIsDisabled"></a>
+                                    <a href="https://mail.google.com/mail/u/0/#settings/general" target="_blank" class="button is-danger is-outlined">GMAIL</a>
+                                </div>
+                            </div>
+                            <br>
+                            <p class="has-text-centered">
+                                © Guillaume Raille 2017
+                                <br>
+                                with Vincent Ballet
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/vue"></script>
+    <script> 
+        var app = new Vue({
+            el: '#app',
+            data: {
+                displayForm: true,
+                email: '',
+                name: '',
+                title: '',
+                copyButtonInnerText: 'Copy',
+                copyIsDisabled: false
+            },
+            mounted: function() {
+                // FireFox
+                if (typeof InstallTrigger !== 'undefined') {
+                    this.copyButtonInnerText = "copy doesn't work on Firefox :(";
+                    this.copyIsDisabled = true;
+                }
+            },
+            methods: {
+                generateSignature: function () {
+                    this.displayForm = false;
+                },
+                copySignature: function () {
+                    if (this.copyIsDisabled) return;
+                    
+                    var doc = document.querySelector("iframe").contentDocument;
+                    var win = document.querySelector("iframe").contentWindow;
+
+                    var range = doc.createRange();
+                    range.selectNode(doc.querySelector("html"));
+
+                    win.getSelection().removeAllRanges();
+                    win.getSelection().addRange(range);
+
+                    doc.execCommand("copy");
+                    win.getSelection().removeAllRanges();
+
+                    this.copyButtonInnerText = 'copied';
+                    this.copyIsDisabled = true;
+                }
+            },
+            computed: {
+                signatureHTML: function () {
+                    return `<!DOCTYPE html><body style="color: rgb(0, 0, 0); letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;"><table style="font-family: Cambria, serif;"><tr><td><img src="https://je.epfl.ch/signature_assets/je-epfl.png" width="60" height="60"><br></td><td dir="ltr"><font face="Helvetica, Arial, sans-serif" style="font-size: 12px;"><div style="margin: 0px; padding: 0px;"><b><span style="color: rgb(69, 102, 142);">${this.name}</span></b></div><div style="margin: 0px; padding: 0px;"><span style="color: rgb(69, 102, 142);">Junior Entreprise EPFL</span><span style="color: rgb(69, 102, 142);"> | </span><i><span style="color: rgb(128, 128, 128);">${this.title}</span></i></div><div style="margin: 0px; padding: 0px;"><a href="tel:+%2041%2021%20693%2020%2035" style="color: rgb(128, 128, 128); text-decoration: none;">+ 41 21 693 20 35</a><span style="color: rgb(69, 102, 142);"> | </span><a href="mailto:${this.email}" style="color: rgb(128, 128, 128); text-decoration: none;">${this.email}</a><span style="color: rgb(69, 102, 142);"> | </span><a href="https://je.epfl.ch" style="color: rgb(128, 128, 128);text-decoration:none;">https://je.epfl.ch</a></div><div style="margin: 0px; padding: 0px;"><span style="color: rgb(128, 128, 128);">CO116</span><span style="color: rgb(69, 102, 142);"> | </span><span style="color: rgb(128, 128, 128);">Case Postale 50</span><span style="color: rgb(69, 102, 142);"> | </span><span style="color: rgb(128, 128, 128);">CH-1015 Lausanne</span><span style="color: rgb(69, 102, 142);"> | </span><a href="https://facebook.com/je-epfl" style="text-decoration: none;"><span><img width="13" height="13" style="margin-bottom: -2px;" src="https://je.epfl.ch/signature_assets/facebook-logo.png"></span></a>&nbsp;<a href="https://www.linkedin.com/company/junior-entreprise-epfl/" style="text-decoration: none;"><span><img width="13" height="13" style="margin-bottom: -2px;" src="https://je.epfl.ch/signature_assets/linkedin-logo.png"></span></a></div></font></td></tr></table><div dir="ltr" style="margin: 0px; padding: 0px;"><font face="Helvetica, Arial, sans-serif" style="font-size: 9px;"><span style="color: rgb(106, 106, 106);"><div style="margin: 0px; padding: 0px;"> </div><div style="margin: 0px; padding: 0px;">-- Disclaimer --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------</div><div style="margin: 0px; padding: 0px;"> </div><div style="margin: 0px; padding: 0px;">This electronic message transmission, including its attachments, contains information from this organization which may be confidential or privileged.</div><div style="margin: 0px; padding: 0px;">The information may be protected by law and is intended to be for the use of the individual or entity named above.</div><div style="margin: 0px; padding: 0px;">If you are not the intended recipient, be aware that any disclosure, copying, distribution or use of the contents of this information is prohibited.</div><div style="margin: 0px; padding: 0px;"> </div><div style="margin: 0px; padding: 0px;">Le présent courriel, y compris les pièces jointes, s'adresse exclusivement à la (aux) personne(s) ou à la société à laquelle (auxquelles) il est destiné.</div><div style="margin: 0px; padding: 0px;">et peut comporter des informations confidentielles et/ou protégées par la loi. Toute divulgation, reproduction ou utilisation de ces informations.</div><div style="margin: 0px; padding: 0px;">est interdite et peut être illégale. Si vous n'êtes pas destinataire de ce courriel, merci de le détruire immédiatement et d'en aviser l'expéditeur.</div></span></font></div></body></html>`
+                }
+            }
+        })
+    </script>
+</body>
+</html>
