@@ -29,7 +29,7 @@
                                 <div class="field">
                                     <label class="label">Title</label>
                                     <div class="control">
-                                        <input class="input" type="text" placeholder="Student" v-model="title">
+                                        <input class="input" type="text" placeholder="Master Student" v-model="title">
                                     </div>
                                 </div>
                                 <div class="field">
@@ -79,12 +79,14 @@
                                 <iframe v-bind:srcdoc="signatureHTML" height="250" width="100%"></iframe>
                                 <div class="has-text-centered">
                                     <a class="button is-primary is-outlined " @click="copySignature" v-text="copyButtonInnerText" v-bind:disabled="copyIsDisabled"></a>
+                                    <a class="button is-danger is-outlined " @click="refreshPage">Try Again</a>
                                 </div>
                             </div>
                             <br>
                             <p class="has-text-centered">
                                 <br>
-                                © <a href="mailto:guillaume.raille@epfl.ch">Guillaume Raille</a> 2017
+                                A problem ? A suggestion to improve the generator ? <a href="mailto:guillaume.raille@epfl.ch">contact me</a><br>
+                                © <a href="mailto:guillaume.raille@epfl.ch">Guillaume Raille</a> - 2017
                             </p>
                         </div>
                     </div>
@@ -119,6 +121,9 @@
             methods: {
                 generateSignature: function () {
                     this.displayForm = false;
+                },
+                refreshPage: function() {
+                    location.reload();
                 },
                 copySignature: function () {
                     if (this.copyIsDisabled) return;
